@@ -5,8 +5,6 @@ from django.dispatch import receiver
 from allauth.account.signals import email_confirmed
 from django.shortcuts import get_object_or_404
 
-from loguru import logger
-
 from .models import Resp, Advert
 from .tasks import mail_for_add_response, mail_for_change_status
 
@@ -23,6 +21,7 @@ def email_confirmed_(request, email_address, **kwargs):
 
 @receiver(post_save, sender=Resp)
 def add_response(sender, instance, created, *args, **kwargs):
+    # Добавляем задание на отпраку письма по факту добавления отклика
     if created:
         adv_pk = instance.post_id
         adv = get_object_or_404(Advert, pk=adv_pk)
@@ -30,6 +29,7 @@ def add_response(sender, instance, created, *args, **kwargs):
             (adv.author.username, adv.author.email, adv.title),
             countdown=30,
         )
+    # Добавляем задание на отправку письма пр факту принятия отклика
     elif kwargs.get('update_fields'):
         mail_for_change_status.apply_async(
             (instance.author.username, instance.author.email),

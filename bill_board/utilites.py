@@ -5,6 +5,7 @@ from loguru import logger
 
 
 def send_mail(email: str, subject: str, html: any) -> None:
+    """Функция отправки почты"""
     connection = None
     try:
         connection = mail.get_connection()
@@ -21,3 +22,4 @@ def send_mail(email: str, subject: str, html: any) -> None:
         logger.error(f'Task mailing added response :: {e}')
     finally:
         connection.close()
+    return

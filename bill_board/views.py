@@ -13,6 +13,7 @@ from .permissions import AdvertOwnerRequiredMixin
 
 
 class AdvertView(ListView):
+    """Вывод объявлений на главной странице"""
     model = Advert
     ordering = '-pk'
     context_object_name = 'advert'
@@ -21,6 +22,9 @@ class AdvertView(ListView):
 
 
 class AdvertDetail(FormMixin, DetailView):
+    """Вывод одного объявления
+    Использован миксин для возможности работы с
+    формой добавления отклика в модальном окне"""
     model = Advert
     form_class = RespForm
     context_object_name = 'content'
@@ -28,6 +32,7 @@ class AdvertDetail(FormMixin, DetailView):
 
 
 class AdvertCreate(LoginRequiredMixin, CreateView):
+    """Форма создания объвления с CKEditor"""
     model = Advert
     form_class = AdvertForm
     template_name = 'create.html'
@@ -40,17 +45,22 @@ class AdvertCreate(LoginRequiredMixin, CreateView):
 
 
 class AdvertEdit(AdvertOwnerRequiredMixin, UpdateView):
+    """Форма редактирования объявления, только автор объявления"""
     model = Advert
     form_class = AdvertForm
     template_name = 'edit.html'
 
 
 class AdvertDelete(AdvertOwnerRequiredMixin, DeleteView):
+    """Удаление объявления, только автор объявления
+    отдельного шаблона нет - форма вызывается в модальном окне объявления"""
     model = Advert
     success_url = reverse_lazy('bill_board:advert')
 
 
 class RespCreate(LoginRequiredMixin, CreateView):
+    """Добавление отклика, только авторизованный пользователь
+        отдельного шаблона нет - форма вызывается в модальном окне объявления"""
     model = Resp
     form_class = RespForm
 
@@ -62,10 +72,10 @@ class RespCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class UserAdvert(ListView):
+class UserAdvert(LoginRequiredMixin, ListView):
+    """Просмотр своих объявлений в личном кабиненте, авторизованные пользователи"""
     template_name = 'advertising.html'
     context_object_name = 'advert'
-    # paginate_by = 10
 
     def get_queryset(self):
         user = get_object_or_404(User, id=self.request.user.id)
@@ -73,7 +83,8 @@ class UserAdvert(ListView):
         return queryset
 
 
-class RespList(ListView):
+class RespList(LoginRequiredMixin, ListView):
+    """Просмотр откликов на свои объявления, авторизованные пользователи"""
     context_object_name = 'responses'
     template_name = 'response_list.html'
 
@@ -99,6 +110,7 @@ class RespList(ListView):
 
 @login_required
 def resp_change_status(request):
+    """Принятие отклика (отправляем update_fields для корректной работы сигнала"""
     if request.method == 'POST':
         response = Resp.objects.get(pk=request.POST.get('respId'))
         response.status = True
@@ -108,6 +120,7 @@ def resp_change_status(request):
 
 @login_required
 def delete_response(request):
+    """Удаление отклика"""
     if request.method == 'POST':
         response = Resp.objects.get(pk=request.POST.get('respId'))
         response.delete()

@@ -1,7 +1,6 @@
-import os
+from django import forms
 
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from django import forms
 
 from .models import Advert, Resp
 
@@ -31,6 +30,7 @@ class AdvertForm(forms.ModelForm):
 
 
 class RespForm(forms.ModelForm):
+    """Добавление отклика"""
     error_css_class = 'text-danger fw-semibold'
 
     class Meta:
