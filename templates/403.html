@@ -1,0 +1,11 @@
+{% extends "default.html" %}
+{% block title %}403 Forbidden{% endblock %}
+{% block title_page %}{% endblock %}
+{% block content %}
+  <h1 class="text-danger">403 Forbidden</h1>
+  <p class="fw-bolder">Возможные причины:</p>
+    <ul>
+        <li class="fw-bolder">Вы не авторизованы...</li>
+        <li class="fw-bolder">У Вас нет прав доступа к данной информации...</li>
+    </ul>
+{% endblock %}

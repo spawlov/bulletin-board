@@ -1,0 +1,23 @@
+{% extends 'default.html' %}
+{% block title %}Объявления{% endblock %}
+{% block title_page %}Объявления{% endblock %}
+{% block content %}
+    <div class="container-fluid">
+        {% for adv in advert %}
+            <div class="card mb-3 shadow">
+                <div class="card-header">
+                    {{ adv.author }}, {{ adv.create }}
+                </div>
+                <div class="card-body">
+                    <a title="{{ adv.title }}" class="text-decoration-none" href="{% url 'bill_board:detail' adv.pk %}">
+                        <h5 class="card-title">{{ adv.title }}</h5>
+                    </a>
+                    <p class="card-text">{{ adv.text|safe|truncatewords_html:64 }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% if page_obj.has_other_pages %}
+    {% include 'paginator.html' %}
+{% endif %}
+{% endblock content %}

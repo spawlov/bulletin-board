@@ -1,0 +1,55 @@
+{% extends 'default.html' %}
+{% block title %}Отклики{% endblock %}
+{% block title_page %}Отклики{% endblock %}
+{% block content %}
+    <form action="" method="get">
+        <div class="input-group px-5">
+            <label class="input-group-text" for="adv">Фильтр откликов</label>
+            <select name="adv" class="form-select" id="filter">
+                <option value="0">Выберите объявление...</option>
+                {% for option in adverts %}
+                    <option value="{{ option.pk }}" {% if adv == option.pk %}selected{% endif %}>{{ option.title }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-outline-primary" type="submit">Показать</button>
+        </div>
+    </form>
+    {% for advert in advert_list %}
+        <div class="card mt-3 shadow">
+            <div class="card-header">{{ advert.title }}</div>
+            <ul class="list-group list-group-flush">
+                {% for resp in responses %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-9">
+                                <span class="text-muted mb-1">
+                                    {{ resp.author.username }}, {{ resp.create }}
+                                </span>
+                                <br>
+                                {{ resp.text|linebreaks }}
+                            </div>
+                            <div class="col-3 text-end mt-2 mb-2">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    {% if not resp.status %}
+                                        <form action="{% url 'bill_board:resp_status' %}" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="respId" value="{{ resp.pk }}">
+                                            <button class="btn btn-sm btn-success">Принять</button>
+                                        </form>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-success disabled">Принято</button>
+                                    {% endif %}
+                                    <form action="{% url 'bill_board:resp_delete' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="respId" value="{{ resp.pk }}">
+                                        <button class="btn btn-sm btn-danger">Удалить</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+{% endblock %}

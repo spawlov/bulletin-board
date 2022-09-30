@@ -1,0 +1,55 @@
+{% extends 'default.html' %}
+{% load board_filters %}
+{% block title %}{{ content.title }}{% endblock %}
+{% block title_page %}{{ content.title }}{% endblock %}
+{% block content %}
+    {% include 'forms_for_detail.html' %}
+    <div class="container-fluid">
+        <div class="card mb-5 shadow">
+            <div class="card-header text-primary text-start fw-bolder">
+                <div class="row">
+                    <div class="col-9">
+                        <span class="h5">{{ content.title }}</span><br>
+                        <span class="text-primary">Категория: {{ content.get_category_display }}</span><br>
+                        <span class="text-muted">{{ content.author }}, {{ content.create }}</span>
+                    </div>
+                    <div class="col-3 text-end mt-2">
+                        <div class="btn-group btn-group-sm" role="group">
+                            {% if request.user.is_authenticated and request.user.is_staff and is_email_verified and request.user.id == content.author.id %}
+                                <a href="{% url 'bill_board:edit' content.pk %}">
+                                    <button class="btn btn-sm btn-primary">Изменить</button>
+                                </a>
+                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body text-start">
+                {{ content.text|safe }}
+            </div>
+            <div class="card-footer text-muted">
+                <div class="row">
+                    <div class="col text-start">
+                        &nbsp;
+                    </div>
+                    <div class="col text-end p-2">
+                        {% if content.resp_set.count > 0 %}
+                            <button type="button" class="btn btn-sm btn-primary position-relative mx-4"  data-bs-toggle="modal" data-bs-target="#responseModal">
+                                Откликнуться
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ content.resp_set.count }}
+                                    <span class="visually-hidden">отклики</span>
+                                </span>
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-sm btn-primary position-relative mx-4"  data-bs-toggle="modal" data-bs-target="#responseModal">
+                                Откликнуться
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
