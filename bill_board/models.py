@@ -38,7 +38,9 @@ class Advert(models.Model):
 
 
 class Resp(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name='Пользователь'
+    )
     post = models.ForeignKey(Advert, on_delete=models.CASCADE, verbose_name='Объявление')
     text = models.TextField(verbose_name='Текст отклика')
     create = models.DateTimeField(auto_now_add=True, verbose_name='Дата отклика')
